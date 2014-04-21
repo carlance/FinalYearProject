@@ -1,5 +1,6 @@
 #include "mainwidget.h"
 #include "ui_mainwidget.h"
+#include "changesound.h"
 #include <pthread.h>
 #include <bps/audiomixer.h>
 #include <mm/renderer.h>
@@ -11,23 +12,27 @@
 #include <stdlib.h>
 #include <cstring>
 #include <string>
+#include <QString>
 using namespace std;
 float volume;
 bool volumechange;
 
-char path1[] = {"app/native/assets/pianoc.wav"};
-char path2[] = {"app/native/assets/pianoc.wav"};
+QString sound,sound2;
+//char path1[] = "app/native/assets/pianoc.wav";
+//char path2[] = "app/native/assets/pianoc.wav";
 char path3[] = {"app/native/assets/testloop.wav"};
 
-char* WAV_RELATIVE_PATH = path1;
-char* WAV_RELATIVE_PATH_2 = path2;
-char* WAV_RELATIVE_PATH_3 = path3;
+char *WAV_RELATIVE_PATH = new char[50]; //"app/native/assets/pianoc.wav";
+char *WAV_RELATIVE_PATH_2 = new char [50]; //"app/native/assets/pianoc.wav";
+char *WAV_RELATIVE_PATH_3 = path3;
+
+
 
 bool changepath;
 
 //setup key data structure
 key key1, key2,key3,key4,key5,key6,key7,key8,key9,key10,key11,key12;
-key key13, key14,key15,key16,key17,key18,key19,key20,key21,key22,key23,key24,key25;
+key key13, key14,key15,key16,key17,key18,key19,key20,key21,key22,key23,key24;
 pthread_mutex_t mutex;
 
 key KeyMsg;
@@ -48,17 +53,26 @@ MainWidget::MainWidget(QWidget *parent) :QWidget(parent), ui(new Ui::MainWidget)
     ui->dial_1->setValue(volume);
     key1.note="c",key2.note="c#", key3.note="d", key4.note="d#", key5.note="e", key6.note="f", key7.note="f#", key8.note="g";
 	key9.note="g#", key10.note="a", key11.note="a#", key12.note="b", key13.note="hc", key14.note="hc#", key15.note="hd", key16.note="hd#";
-	key17.note="he", key18.note="hf", key19.note="hf#", key20.note="hg", key21.note="hg#", key22.note="ha", key23.note="ha#", key24.note="hb" , key25.note="hcc";
-
-	/*key1.offsetValue=0,key2.offsetValue=1, key3.offsetValue=2, key4.offsetValue=3, key5.offsetValue=4, key6.offsetValue=5, key7.offsetValue=6, key8.offsetValue=7;
-	key9.offsetValue=8, key10.offsetValue=9, key11.offsetValue=10, key12.offsetValue=11, key13.offsetValue=0, key14.offsetValue=1, key15.offsetValue=2, key16.offsetValue=3;
-	key17.offsetValue=4, key18.offsetValue=5, key19.offsetValue=6, key20.offsetValue=7, key21.offsetValue=8, key22.offsetValue=9, key23.offsetValue=10, key24.offsetValue=11;*/
+	key17.note="he", key18.note="hf", key19.note="hf#", key20.note="hg", key21.note="hg#", key22.note="ha", key23.note="ha#", key24.note="hb";
 
 	key1.offsetValue=0,key2.offsetValue=1, key3.offsetValue=2, key4.offsetValue=3, key5.offsetValue=4, key6.offsetValue=5, key7.offsetValue=6, key8.offsetValue=7;
 	key9.offsetValue=8, key10.offsetValue=9, key11.offsetValue=10, key12.offsetValue=11, key13.offsetValue=0, key14.offsetValue=1, key15.offsetValue=2, key16.offsetValue=3;
-	key17.offsetValue=4, key18.offsetValue=5, key19.offsetValue=6, key20.offsetValue=7, key21.offsetValue=8, key22.offsetValue=9, key23.offsetValue=10, key24.offsetValue=11, key25.offsetValue=12;
+	key17.offsetValue=4, key18.offsetValue=5, key19.offsetValue=6, key20.offsetValue=7, key21.offsetValue=8, key22.offsetValue=9, key23.offsetValue=10, key24.offsetValue=11;
 	chanid2 = ChannelCreate(NULL);
 	coid1 = ConnectAttach( 0 ,pid1, chanid2, 0 , NULL);
+
+	ui->comboBox->addItem("Piano");
+	ui->comboBox->addItem("Guitar");
+	ui->comboBox->addItem("Synth");
+	ui->comboBox->addItem("Violin");
+	ui->comboBox_2->addItem("Piano");
+	ui->comboBox_2->addItem("Guitar");
+	ui->comboBox_2->addItem("Synth");
+	ui->comboBox_2->addItem("Violin");
+
+
+	strcpy(WAV_RELATIVE_PATH, "app/native/assets/pianoc.wav");
+	strcpy(WAV_RELATIVE_PATH_2, "app/native/assets/pianoc.wav");
 }
 
 MainWidget::~MainWidget()
@@ -578,10 +592,10 @@ void MainWidget::on_toolButton_34_pressed()
     ui->toolButton_34->setIcon(QIcon("app/native/assets/frwhite.png"));
     ui->toolButton_34->setAutoRaise(false);
     pthread_mutex_lock(&mutex);
-    KeyMsg = key25;
-   	KeyMsg.value=1;
-   	status1 = MsgSend(coid1, (const char*) &KeyMsg, sbyte1, replybuff1, rbyte1);
-   	pthread_mutex_unlock(&mutex);
+    KeyMsg = key24;
+    KeyMsg.value=1;
+	status1 = MsgSend(coid1, (const char*) &KeyMsg, sbyte1, replybuff1, rbyte1);
+    pthread_mutex_unlock(&mutex);
     
 }
 
@@ -591,84 +605,103 @@ void MainWidget::on_toolButton_34_released()
     ui->toolButton_34->setAutoRaise(false);
     pthread_mutex_lock(&mutex);
 	KeyMsg.value=2;
-   	status1 = MsgSend(coid1, (const char*) &KeyMsg, sbyte1, replybuff1, rbyte1);
-    pthread_mutex_unlock(&mutex);
+	status1 = MsgSend(coid1, (const char*) &KeyMsg, sbyte1, replybuff1, rbyte1);
+	pthread_mutex_unlock(&mutex);
 }
 
 void MainWidget::on_toolButton_4_pressed()
 {
-    ui->toolButton_4->setIcon(QIcon("app/native/assets/playicon2.png"));
-    ui->toolButton_3->setIcon(QIcon("app/native/assets/stopicon1.png"));
+    ui->toolButton_4->setIcon(QIcon(":/playicon2.png"));
+    ui->toolButton_3->setIcon(QIcon(":/stopicon1.png"));
 }
 
 void MainWidget::on_toolButton_3_pressed()
 {
-    ui->toolButton_3->setIcon(QIcon("app/native/assets/stopicon1.png"));
-    ui->toolButton_4->setIcon(QIcon("app/native/assets/playicon1.png"));
-    ui->toolButton_9->setIcon(QIcon("app/native/assets/recordicon.png"));
+    ui->toolButton_3->setIcon(QIcon(":/stopicon2.png"));
+    ui->toolButton_4->setIcon(QIcon(":/playicon1.png"));
+    ui->toolButton_9->setIcon(QIcon(":/recordicon.png"));
 }
 
 void MainWidget::on_toolButton_9_pressed()
 {
-    ui->toolButton_9->setIcon(QIcon("app/native/assets/recordicon2.png"));
-    ui->toolButton_3->setIcon(QIcon("app/native/assets/stopicon1.png"));
-    ui->toolButton_9->setAutoRaise(false);
-}
-
-void MainWidget::on_toolButton_9_released()
-{
-	ui->toolButton_9->setIcon(QIcon("app/native/assets/recordicon1.png"));
-	ui->toolButton_9->setAutoRaise(false);
-
+    ui->toolButton_9->setIcon(QIcon(":/recordicon2.png"));
+    ui->toolButton_3->setIcon(QIcon(":/stopicon1.png"));
 }
 
 void MainWidget::on_LoadSound_clicked()
 {
+	sound = ui->comboBox->currentText();
+	sound2 = ui->comboBox_2->currentText();
 
-    if (ui->comboBox->currentText() == "Piano")
-    { strcpy(path1, "app/native/assets/pianoc.wav");
-       WAV_RELATIVE_PATH = path1;
+    if (sound == "Piano")
+    { strcpy(WAV_RELATIVE_PATH, "app/native/assets/pianoc.wav");
+      setFileParams(0);
+      //setFileParams(1);
+       //path1 = "app/native/assets/pianoc.wav";
+       //WAV_RELATIVE_PATH = path1;
        changepath = true;
     }
-    else if (ui->comboBox->currentText() == "Guitar")
-    { strcpy(path1,"app/native/assets/guitar.wav");
-      WAV_RELATIVE_PATH = path1;
+    else if (sound == "Guitar")
+    { strcpy(WAV_RELATIVE_PATH,"app/native/assets/acousticguitar.wav");
+      setFileParams(0);
+      //setFileParams(1);
+    //path1 = "app/native/assets/acoustic.wav";
+      //WAV_RELATIVE_PATH = path1;
       changepath = true;
     }
-    else if (ui->comboBox->currentText() == "Violin")
-    { strcpy(path1,"app/native/assets/violinc.wav");
-      WAV_RELATIVE_PATH = path1;
+    else if (sound == "Violin")
+    { strcpy(WAV_RELATIVE_PATH,"app/native/assets/violinc.wav");
+      setFileParams(0);
+      //setFileParams(1);
+    //path1 = "app/native/assets/violinc.wav";
+      //WAV_RELATIVE_PATH = path1;
       changepath = true;
     }
-    else if (ui->comboBox->currentText() == "Synth")
-    { strcpy(path1,"app/native/assets/C4loop.wav");
-      WAV_RELATIVE_PATH = path1;
-      changepath = true;
-    }
-
-    if (ui->comboBox_2->currentText() == "Piano")
-    { strcpy(path2,"app/native/assets/pianoc.wav");
-      WAV_RELATIVE_PATH_2 = path2;
-      changepath = true;
-    }
-    else if (ui->comboBox_2->currentText() == "Guitar")
-    { strcpy(path2,"app/native/assets/guitar.wav");
-      WAV_RELATIVE_PATH_2 = path2;
-      changepath = true;
-    }
-    else if (ui->comboBox_2->currentText() == "Violin")
-    { strcpy(path2,"app/native/assets/violinc.wav");
-      WAV_RELATIVE_PATH_2 = path2;
-      changepath = true;
-    }
-    else if (ui->comboBox_2->currentText() == "Synth")
-    { strcpy(path2,"app/native/assets/C4loop.wav");
-      WAV_RELATIVE_PATH_2 = path2;
+    else if (sound == "Synth")
+    { strcpy(WAV_RELATIVE_PATH,"app/native/assets/C4loop.wav");
+      setFileParams(0);
+      //setFileParams(1);
+    //path1 = "app/native/assets/C4loop.wav";
+      //WAV_RELATIVE_PATH = path1;
       changepath = true;
     }
 
-    QMessageBox::information(this,"path description", path1);
-    QMessageBox::information(this,"path description", path2);
+    if (sound2 == "Piano")
+    { strcpy(WAV_RELATIVE_PATH_2,"app/native/assets/pianoc.wav");
+    //setFileParams(0);
+    setFileParams(1);
+    //path2 = "app/native/assets/pianoc.wav";
+      //WAV_RELATIVE_PATH_2 = path2;
+      changepath = true;
+    }
+    else if (sound2 == "Guitar")
+    { strcpy(WAV_RELATIVE_PATH_2,"app/native/assets/acousticguitar.wav");
+    //setFileParams(0);
+    setFileParams(1);
+    //path2 = "app/native/assets/acousticguitar.wav";
+      //WAV_RELATIVE_PATH_2 = path2;
+      changepath = true;
+    }
+    else if (sound2 == "Violin")
+    { strcpy(WAV_RELATIVE_PATH_2,"app/native/assets/violinc.wav");
+    //setFileParams(0);
+    setFileParams(1);
+    //path2 = "app/native/assets/violinc.wav";
+      //WAV_RELATIVE_PATH_2 = path2;
+      changepath = true;
+    }
+    else if (sound2 == "Synth")
+    { strcpy(WAV_RELATIVE_PATH_2,"app/native/assets/C4loop.wav");
+    //setFileParams(0);
+    setFileParams(1);
+    //path2 = "app/native/assets/C4loop.wav";
+      //WAV_RELATIVE_PATH_2 = path2;
+      changepath = true;
+    }
+
+    QString thesounds = sound+"/"+sound2;
+
+    QMessageBox::information(this,"sounds", thesounds);
 }
 
 void MainWidget::on_LoadBeatBox_clicked()
@@ -677,7 +710,7 @@ void MainWidget::on_LoadBeatBox_clicked()
 
     if (ui->comboBox_3->currentText() == "Beatbox1")
     { strcpy(path3, "app/native/beatbox1.wav");
-      //y3 = snprintf(WAV_RELATIVE_PATH_3, PATH_MAX, "%s",path3);
+      y3 = snprintf(WAV_RELATIVE_PATH_3, PATH_MAX, "%s",path3);
     }
     else if (ui->comboBox_3->currentText() == "Beatbox2")
     { strcpy(path3, "app/native/beatbox2.wav");
