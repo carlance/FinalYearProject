@@ -598,19 +598,7 @@ public:
         toolButton_9->setText(QString());
         toolButton_4->setText(QString());
         comboBox->clear();
-        comboBox->insertItems(0, QStringList()
-         << QApplication::translate("MainWidget", "Piano", 0, QApplication::UnicodeUTF8)
-         << QApplication::translate("MainWidget", "Guitar", 0, QApplication::UnicodeUTF8)
-         << QApplication::translate("MainWidget", "Synth", 0, QApplication::UnicodeUTF8)
-         << QApplication::translate("MainWidget", "Violin", 0, QApplication::UnicodeUTF8)
-        );
         comboBox_2->clear();
-        comboBox_2->insertItems(0, QStringList()
-         << QApplication::translate("MainWidget", "Piano", 0, QApplication::UnicodeUTF8)
-         << QApplication::translate("MainWidget", "Guitar", 0, QApplication::UnicodeUTF8)
-         << QApplication::translate("MainWidget", "Synth", 0, QApplication::UnicodeUTF8)
-         << QApplication::translate("MainWidget", "Violin", 0, QApplication::UnicodeUTF8)
-        );
         label_7->setText(QApplication::translate("MainWidget", "1ST OCTAVE", 0, QApplication::UnicodeUTF8));
         label_8->setText(QApplication::translate("MainWidget", "2ND OCTAVE", 0, QApplication::UnicodeUTF8));
         label_10->setText(QApplication::translate("MainWidget", "Volume", 0, QApplication::UnicodeUTF8));
