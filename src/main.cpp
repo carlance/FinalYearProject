@@ -77,6 +77,7 @@
 //End of Qt Libraries
 
 #include "mainwidget.h"
+#include "changesound.h"
 
 123
 
