@@ -1,0 +1,4 @@
+
+
+void setFileParams(int x);
+
